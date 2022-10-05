@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Login</title>
+  <style>
+    body {
+    margin-left: 20px;
+    }
+
+    .container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2px;
+    }
+
+    .label {
+        width: 100px;
+        display: inline-block;
+    }
+
+    .container .selection {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container .captcha>input {
+        text-align: center;
+        width: 100px;
+    }
+
+    label{
+      display: block; 
+      float: left;
+      width: 120px;
+      flex: none;;
+    }
+
+    .captcha{
+      width: 100px;
+    }
+
+    .form {
+    border: 1.5px solid rgb(73, 141, 251);
+    width: 460px;
+    padding: 0px 15px 15px;
+    margin-top: none;
+    }
+
+    span{
+      margin-left: 5px;
+    }
+    
+    
+  </style>
+  
+  <script>
+    
+
+    var kategoriObject = {
+      "Baju": ["Baju Pria", "Baju Wanita", "Baju Anak"],
+      "Elektronik": ["Mesin Cuci", "Kulkas", "AC"],
+      "Alat Tulis": ["Kertas", "Map", "Pulpen"]
+    }
+
+    window.onload = function() {
+      getChaptcha();
+      var kategoriSelector = document.getElementById("kategori");
+      var subkategoriSelector = document.getElementById("subkategori");
+      for (var x in kategoriObject) {
+        kategoriSelector.options[kategoriSelector.options.length] = new Option(x, x);
+      }
+      
+      kategoriSelector.onchange = function() {
+        subkategoriSelector.length = 1;
+        var y = kategoriObject[this.value];
+        for (var i=0; i< y.length; i++){
+          subkategoriSelector.options[subkategoriSelector.options.length] = new Option(y[i], y[i]);
+        }
+      }
+    }
+    
+    function getChaptcha(){
+      const captcha = generateCaptcha();
+      document.getElementById('captcha1').value = captcha;
+
+    }
+
+    function generateCaptcha(){
+      const lowerAlp = "abcdefghijklmnopqrstuvwxyz"
+      const upperAlp = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      const numerical = "0123456789"
+
+      const data = lowerAlp + upperAlp + numerical
+
+      let generator = '';
+      for (let i = 0; i < 5; i++) {
+        generator += data[Math.floor(Math.random() * data.length)]
+      }
+      return generator;
+    }
+    
+    function onGrosir(){
+      if(document.getElementById("grosyes").checked) {
+        document.getElementById("hargaGrosir").disabled = false;
+      }
+      if(document.getElementById("grosno").checked){
+        document.getElementById("hargaGrosir").disabled = true;
+      }
+    }
+    
+    function jasaKirim(){
+      var jne = document.getElementById("jne").checked;
+      var tiki = document.getElementById("tiki").checked;
+      var sicepat = document.getElementById("sicepat").checked;
+      var ninja = document.getElementById("ninja").checked;
+      var wahana = document.getElementById("wahana").checked;
+      var index=0;
+      let err = false;
+      var validationMassage = "Harus memilih 3 atau lebih Jasa Kirim"
+
+      jne? index++:index;
+      tiki? index++:index;
+      sicepat? index++:index;
+      ninja? index++:index;
+      wahana? index++:index;
+      index>=3? err:err = true;
+      err?document.getElementById("errjasaKirim").innerHTML = "Mimimal 3 Jasa Kirim":document.getElementById("errjasaKirim").innerHTML = "";
+      if(err){
+        return false;
+      }else{
+        return true;
+      }
+    }
+
+    function validateForm(){
+      var err = false;
+      var validationMassage = "Tidak valid";
+      
+      
+      if(document.forms["formProduk"]["namaProduk"].checkValidity() == false){
+        document.getElementById("errnamaProduk").innerHTML = validationMassage;
+        err = true;
+      }else{
+        document.getElementById("errnamaProduk").innerHTML = "";
+      }
+      if(document.forms["formProduk"]["deskripsiProduk"].checkValidity() == false){
+        document.getElementById("errdeskripsi").innerHTML = validationMassage;
+        err = true;
+      }else{
+        document.getElementById("errdeskripsi").innerHTML = "";
+      }
+
+      
+      
+      if(document.forms["formProduk"]["hargaSatuan"].checkValidity() == false){
+        document.getElementById("errhargaSatuan").innerHTML = validationMassage;
+        err = true;
+      }else{
+        document.getElementById("errhargaSatuan").innerHTML = "";
+      }
+      
+      if(document.getElementById("grosyes").checked) {
+        if(document.forms["formProduk"]["hargaGrosir"].checkValidity() == false){
+          document.getElementById("errhargaGrosir").innerHTML = validationMassage;
+        }
+      }else{
+        document.getElementById("errhargaGrosir").innerHTML = "";
+      }
+
+      if(!jasaKirim()){
+        document.getElementById("errjasaKirim").innerHTML = validationMassage;
+      }else{
+        document.getElementById("errjasaKirim").innerHTML = "";
+      }
+
+
+      if(document.getElementById("captcha1").value != document.getElementById("captcha2").value){
+        var robot = "ANDA ROBOT!!!";
+        document.getElementById("errchaptcha").innerHTML = validationMassage;
+        err = true;
+      }else{
+        document.getElementById("errchaptcha").innerHTML = "";
+      }
+
+      if(document.forms["formProduk"]["kategori"].options == document.getElementById("pilkategori")){
+        console.log("salah");
+      }
+    }
+    
+    function resetForm(){
+      
+    }
+
+  </script>
+  
+</head>          
+<body>
+  <div class="form">
+    <h1>Form Tambah Data Produk</h1>
+    <form name="formProduk" action="js_validation_nim.html" method="post" onsubmit="return validateForm()">
+      <div class="container">
+        <label>
+          Nama Produk 
+        </label>
+        <input type="text" name="namaProduk" id="namaProduk" required="required" minlength="5" maxlength="30" style="margin-bottom: 5px; width: 250px; "/>
+        <span id="errnamaProduk"></span><br />
+      </div>
+      
+      <div class="container">        
+        <label>
+          Deskripsi</label> <textarea type="richtect" name="deskripsiProduk" id="deskripsiProduk" required="required" minlength="5" maxlength="100" style="margin-bottom: 5px; width: 250px; height: 100px; vertical-align: middle;" ></textarea>
+          <span id="errdeskripsi"></span><br/>
+      </div>
+          
+      <div class="container">
+      <label> Kategori</label>  <select name="kategori" id="kategori" required="required" style="margin-bottom: 5px;">
+            <option id="pilkategori" value="none">--Pilih Kategori--</option>
+        </select>
+        <span id="errkategori"></span><br/>
+      </div>
+        
+      <div class="container">
+        <label>Sub Kategori </label><select name="subkategori" id="subkategori" required="required" style="margin-bottom: 5px">
+          <option value="none">--Pilih Sub Kategori--</option>
+        </select>
+        <span id="errsubkategori"></span><br/>
+      </div>  
+
+      <div class="container">  
+        <label>Harga satuan</label> <input type="number" id="hargaSatuan" name="hargaSatuan" required="required=" style="margin-bottom: 5px"/>
+        <span id="errhargaSatuan"></span><br/>
+      </div>  
+
+      <div class="container">
+        <label>Grosir</label>
+        <input type="radio" id="grosyes" name="grosir" onclick="onGrosir()" value="Ya">Ya</input>
+        <input type="radio" id="grosno" name="grosir" onclick="onGrosir()" value="Tidak">Tidak</input>
+        <span id="errgrosir"></span><br/>
+      </div>
+        
+      <div class="container">        
+        <label>Harga Grosir </label><input type="number" id="hargaGrosir" name="hargaGrosir" disabled="true" required="required=" style="margin-bottom: 5px"/>
+        <span id="errhargaGrosir"></span><br/>
+      </div>
+        
+      <div class="container">
+      <label>Jasa Kirim</label>
+        <div style="display: inline-block; margin-bottom: 5px; width: 120px; height: 100px; vertical-align: middle;">
+          <input type="checkbox" id="jne" name="jne" value="JNE" onclick="jasaKirim()">JNE</input><br/>
+          <input type="checkbox" id="tiki" name="tiki"value="TIKI" onclick="jasaKirim()">TIKI</input><br/>
+          <input type="checkbox" id="sicepat" name="sicepat" value="SiCepat" onclick="jasaKirim()">Si Cepat</input><br/>
+          <input type="checkbox" id="ninja" name="ninja" value="NinjaExpres" onclick="jasaKirim()">Ninja Expres</input><br/>
+          <input type="checkbox" id="wahana" name="wahana" value="Wahana" onclick="jasaKirim()">Wahana</input><br/>
+        </div>
+        <span id="errjasaKirim"></span> <br/>
+      </div>
+        
+      <div class="container">
+        <label>Captcha</label><input class="captcha" type="text" id="captcha1" style="margin-right: 5px;" disabled></input>    
+        <input class="captcha" type="text" id="captcha2">
+        <span id="errchaptcha"></span><br/>
+      </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <br />
+        <input type="button" value="submit" onclick="validateForm()">
+        <input type="reset" value="reset">
+      </form>
+  </div>
+</body>
+</html>
