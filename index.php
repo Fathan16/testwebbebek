@@ -3,7 +3,7 @@
     <?php
 
     //session_start();
-    require_once('db_login.php');
+    include('db_login.php');
     ?>
 
 <?php
